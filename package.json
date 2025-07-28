@@ -17,7 +17,7 @@
     "db:migrate": "npx prisma migrate dev",
     "db:seed": "ts-node prisma/seed.ts",
     "db:studio": "npx prisma studio",
-    "railway:build": "prisma generate && npm run build",
+    "railway:build": "npm run build",
     "railway:start": "prisma migrate deploy && node dist/test-server.js"
   },
   "dependencies": {
