@@ -15,6 +15,9 @@ app.use(compression());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
+// 提供靜態文件服務
+app.use(express.static('public'));
+
 // 速率限制
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -32,8 +35,13 @@ app.get('/health', (req, res) => {
   });
 });
 
-// 根路由
+// 根路由 - 重定向到網頁界面
 app.get('/', (req, res) => {
+  res.sendFile(__dirname + '/public/index.html');
+});
+
+// API資訊端點
+app.get('/api', (req, res) => {
   res.json({
     message: '🍗 雞排店線上點餐系統 API',
     version: '1.0.0',

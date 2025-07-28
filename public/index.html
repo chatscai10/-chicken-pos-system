@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🍗 雞排店線上點餐系統</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft JhengHei', Arial, sans-serif;
+            background: linear-gradient(135deg, #ff6b35, #f7931e);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .auth-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .auth-section h2 {
+            color: #ff6b35;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #ff6b35;
+            box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+        }
+
+        .btn {
+            background: #ff6b35;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .btn:hover {
+            background: #e55a2b;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 107, 53, 0.3);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .products-section {
+            display: none;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .product-card {
+            border: 2px solid #eee;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s;
+            background: #fafafa;
+        }
+
+        .product-card:hover {
+            border-color: #ff6b35;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(255, 107, 53, 0.1);
+        }
+
+        .product-card h3 {
+            color: #ff6b35;
+            margin-bottom: 10px;
+            font-size: 1.5em;
+        }
+
+        .product-card p {
+            color: #666;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .product-price {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .quantity-btn {
+            background: #ff6b35;
+            color: white;
+            border: none;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .quantity-display {
+            font-size: 18px;
+            font-weight: bold;
+            min-width: 30px;
+            text-align: center;
+        }
+
+        .cart-section {
+            display: none;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .cart-total {
+            font-size: 1.5em;
+            font-weight: bold;
+            text-align: right;
+            margin-top: 20px;
+            color: #ff6b35;
+        }
+
+        .user-info {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            color: white;
+            text-align: center;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🍗 雞排店線上點餐系統</h1>
+            <p>最新鮮的雞排，最道地的台灣味</p>
+        </div>
+
+        <!-- 用戶資訊區 -->
+        <div id="userInfo" class="user-info" style="display: none;">
+            <div id="userDetails"></div>
+            <button class="btn btn-secondary" onclick="logout()">登出</button>
+        </div>
+
+        <!-- 登入註冊區 -->
+        <div id="authSection" class="auth-section">
+            <h2>🔐 登入帳號</h2>
+            <div id="authMessage"></div>
+            
+            <div class="form-group">
+                <label for="email">電子郵件：</label>
+                <input type="email" id="email" placeholder="輸入您的電子郵件" value="admin@test.com">
+            </div>
+            
+            <div class="form-group">
+                <label for="password">密碼：</label>
+                <input type="password" id="password" placeholder="輸入您的密碼" value="password123">
+            </div>
+            
+            <button class="btn" onclick="login()">🍗 立即登入</button>
+            
+            <div style="text-align: center; margin: 20px 0; color: #666;">
+                測試帳號：admin@test.com / password123<br>
+                或：customer@test.com / password123
+            </div>
+        </div>
+
+        <!-- 商品展示區 -->
+        <div id="productsSection" class="products-section">
+            <h2 style="text-align: center; color: #ff6b35; margin-bottom: 20px;">🍗 美味菜單</h2>
+            <div id="productsGrid" class="products-grid">
+                <div class="loading">載入商品中...</div>
+            </div>
+        </div>
+
+        <!-- 購物車區 -->
+        <div id="cartSection" class="cart-section">
+            <h2 style="text-align: center; color: #ff6b35; margin-bottom: 20px;">🛒 我的購物車</h2>
+            <div id="cartItems"></div>
+            <div id="cartTotal" class="cart-total">總計：$0</div>
+            <button class="btn" onclick="placeOrder()" id="orderBtn" disabled>🚀 立即下單</button>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'https://chicken-pos-system.onrender.com';
+        let currentUser = null;
+        let authToken = null;
+        let cart = [];
+        let products = [];
+
+        // 登入功能
+        async function login() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            if (!email || !password) {
+                showMessage('請輸入電子郵件和密碼', 'error');
+                return;
+            }
+
+            try {
+                showMessage('登入中...', 'info');
+                
+                const response = await fetch(`${API_BASE}/api/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    currentUser = data.user;
+                    authToken = data.token;
+                    
+                    showMessage('登入成功！載入商品中...', 'success');
+                    showUserInfo();
+                    await loadProducts();
+                } else {
+                    showMessage(data.error || '登入失敗', 'error');
+                }
+            } catch (error) {
+                showMessage('網路錯誤，請稍後再試', 'error');
+                console.error('登入錯誤:', error);
+            }
+        }
+
+        // 顯示用戶資訊
+        function showUserInfo() {
+            document.getElementById('authSection').style.display = 'none';
+            document.getElementById('userInfo').style.display = 'block';
+            document.getElementById('userDetails').innerHTML = `
+                歡迎回來，${currentUser.displayName} (${currentUser.email})
+            `;
+        }
+
+        // 載入商品
+        async function loadProducts() {
+            try {
+                const response = await fetch(`${API_BASE}/api/products`, {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    products = data.data;
+                    displayProducts();
+                    document.getElementById('productsSection').style.display = 'block';
+                    document.getElementById('cartSection').style.display = 'block';
+                    updateCart();
+                } else {
+                    showMessage('載入商品失敗', 'error');
+                }
+            } catch (error) {
+                showMessage('載入商品時發生錯誤', 'error');
+                console.error('載入商品錯誤:', error);
+            }
+        }
+
+        // 顯示商品
+        function displayProducts() {
+            const grid = document.getElementById('productsGrid');
+            grid.innerHTML = products.map(product => `
+                <div class="product-card">
+                    <h3>${product.name}</h3>
+                    <p>${product.description}</p>
+                    <div class="product-price">NT$ ${product.basePrice}</div>
+                    
+                    ${product.variants.length > 0 ? `
+                        <div style="margin-bottom: 15px;">
+                            <label>規格選擇：</label>
+                            <select id="variant-${product.id}" style="padding: 5px; border-radius: 5px; border: 1px solid #ddd;">
+                                <option value="">一般 (+$0)</option>
+                                ${product.variants.map(variant => 
+                                    `<option value="${variant.id}|${variant.price}">${variant.name} (+$${variant.price})</option>`
+                                ).join('')}
+                            </select>
+                        </div>
+                    ` : ''}
+                    
+                    ${product.addons.length > 0 ? `
+                        <div style="margin-bottom: 15px;">
+                            <label>加購選項：</label>
+                            ${product.addons.map(addon => `
+                                <div>
+                                    <input type="checkbox" id="addon-${product.id}-${addon.id}" value="${addon.id}|${addon.price}">
+                                    <label for="addon-${product.id}-${addon.id}">${addon.name} (+$${addon.price})</label>
+                                </div>
+                            `).join('')}
+                        </div>
+                    ` : ''}
+                    
+                    <div class="quantity-controls">
+                        <button class="quantity-btn" onclick="changeQuantity('${product.id}', -1)">-</button>
+                        <span class="quantity-display" id="qty-${product.id}">0</span>
+                        <button class="quantity-btn" onclick="changeQuantity('${product.id}', 1)">+</button>
+                    </div>
+                    
+                    <button class="btn" onclick="addToCart('${product.id}')">加入購物車</button>
+                </div>
+            `).join('');
+        }
+
+        // 數量控制
+        function changeQuantity(productId, change) {
+            const qtyElement = document.getElementById(`qty-${productId}`);
+            let currentQty = parseInt(qtyElement.textContent);
+            currentQty = Math.max(0, currentQty + change);
+            qtyElement.textContent = currentQty;
+        }
+
+        // 加入購物車
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            const quantity = parseInt(document.getElementById(`qty-${productId}`).textContent);
+            
+            if (quantity === 0) {
+                alert('請選擇數量');
+                return;
+            }
+
+            let price = product.basePrice;
+            let itemName = product.name;
+            
+            // 處理規格
+            const variantSelect = document.getElementById(`variant-${productId}`);
+            if (variantSelect && variantSelect.value) {
+                const [variantId, variantPrice] = variantSelect.value.split('|');
+                price += parseInt(variantPrice);
+                const variant = product.variants.find(v => v.id === variantId);
+                itemName += ` (${variant.name})`;
+            }
+            
+            // 處理加購
+            product.addons.forEach(addon => {
+                const checkbox = document.getElementById(`addon-${productId}-${addon.id}`);
+                if (checkbox && checkbox.checked) {
+                    price += addon.price;
+                    itemName += ` +${addon.name}`;
+                }
+            });
+
+            // 加入購物車
+            const cartItem = {
+                id: Date.now().toString(),
+                productId,
+                name: itemName,
+                price,
+                quantity,
+                total: price * quantity
+            };
+
+            cart.push(cartItem);
+            updateCart();
+            
+            // 重置數量
+            document.getElementById(`qty-${productId}`).textContent = '0';
+            
+            alert(`已加入購物車：${itemName} x${quantity}`);
+        }
+
+        // 更新購物車顯示
+        function updateCart() {
+            const cartItems = document.getElementById('cartItems');
+            const cartTotal = document.getElementById('cartTotal');
+            const orderBtn = document.getElementById('orderBtn');
+
+            if (cart.length === 0) {
+                cartItems.innerHTML = '<div style="text-align: center; color: #666; padding: 20px;">購物車是空的</div>';
+                cartTotal.textContent = '總計：$0';
+                orderBtn.disabled = true;
+                return;
+            }
+
+            cartItems.innerHTML = cart.map(item => `
+                <div class="cart-item">
+                    <div>
+                        <strong>${item.name}</strong><br>
+                        <small>單價：$${item.price} × ${item.quantity}</small>
+                    </div>
+                    <div style="text-align: right;">
+                        <strong>$${item.total}</strong><br>
+                        <button onclick="removeFromCart('${item.id}')" style="background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">移除</button>
+                    </div>
+                </div>
+            `).join('');
+
+            const total = cart.reduce((sum, item) => sum + item.total, 0);
+            cartTotal.textContent = `總計：$${total}`;
+            orderBtn.disabled = false;
+        }
+
+        // 從購物車移除
+        function removeFromCart(itemId) {
+            cart = cart.filter(item => item.id !== itemId);
+            updateCart();
+        }
+
+        // 下單
+        async function placeOrder() {
+            if (cart.length === 0) {
+                alert('購物車是空的');
+                return;
+            }
+
+            try {
+                const orderData = {
+                    items: cart.map(item => ({
+                        id: item.productId,
+                        name: item.name,
+                        price: item.price,
+                        quantity: item.quantity
+                    })),
+                    orderType: 'TAKEOUT'
+                };
+
+                const response = await fetch(`${API_BASE}/api/orders`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify(orderData)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert(`訂單建立成功！\n訂單編號：${data.order.orderNumber}\n總金額：$${data.order.totalAmount}`);
+                    cart = [];
+                    updateCart();
+                } else {
+                    alert('下單失敗：' + (data.error || '未知錯誤'));
+                }
+            } catch (error) {
+                alert('下單時發生錯誤，請稍後再試');
+                console.error('下單錯誤:', error);
+            }
+        }
+
+        // 登出
+        function logout() {
+            currentUser = null;
+            authToken = null;
+            cart = [];
+            
+            document.getElementById('authSection').style.display = 'block';
+            document.getElementById('userInfo').style.display = 'none';
+            document.getElementById('productsSection').style.display = 'none';
+            document.getElementById('cartSection').style.display = 'none';
+            
+            showMessage('已登出', 'info');
+        }
+
+        // 顯示訊息
+        function showMessage(message, type) {
+            const messageDiv = document.getElementById('authMessage');
+            messageDiv.innerHTML = `<div class="alert alert-${type === 'error' ? 'error' : 'success'}">${message}</div>`;
+            
+            if (type !== 'info') {
+                setTimeout(() => {
+                    messageDiv.innerHTML = '';
+                }, 3000);
+            }
+        }
+
+        // Enter鍵登入
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('password').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    login();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
