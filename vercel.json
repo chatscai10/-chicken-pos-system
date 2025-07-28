@@ -1,0 +1,27 @@
+{
+  "version": 2,
+  "name": "chicken-pos-system",
+  "builds": [
+    {
+      "src": "src/test-server.ts",
+      "use": "@vercel/node",
+      "config": {
+        "includeFiles": ["prisma/**"]
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "src/test-server.ts"
+    }
+  ],
+  "env": {
+    "NODE_ENV": "production"
+  },
+  "functions": {
+    "src/test-server.ts": {
+      "maxDuration": 30
+    }
+  }
+}
