@@ -1,0 +1,12 @@
+[phases.build]
+cmds = [
+  "npm ci",
+  "npx prisma generate",
+  "npm run build"
+]
+
+[phases.start]
+cmd = "npm start"
+
+[variables]
+NODE_ENV = "production"

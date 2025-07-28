@@ -16,7 +16,9 @@
     "typecheck": "tsc --noEmit",
     "db:migrate": "npx prisma migrate dev",
     "db:seed": "ts-node prisma/seed.ts",
-    "db:studio": "npx prisma studio"
+    "db:studio": "npx prisma studio",
+    "railway:build": "prisma generate && npm run build",
+    "railway:start": "prisma migrate deploy && node dist/test-server.js"
   },
   "dependencies": {
     "@azure/storage-blob": "^12.17.0",

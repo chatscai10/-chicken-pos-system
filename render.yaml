@@ -1,0 +1,29 @@
+# Render.com 部署配置
+version: 1
+
+services:
+  - type: web
+    name: chicken-pos-api
+    runtime: node
+    plan: free
+    branch: main
+    buildCommand: npm install && npx prisma generate && npm run build
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_REFRESH_SECRET  
+        generateValue: true
+      - key: BCRYPT_ROUNDS
+        value: 12
+
+databases:
+  - name: chicken-pos-db
+    databaseName: chicken_pos_system
+    user: postgres
+    plan: free
